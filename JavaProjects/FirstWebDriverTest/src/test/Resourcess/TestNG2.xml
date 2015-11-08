@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="DataProvider">
+  <test name="p1 test">
+    <groups>
+      <run>
+        <include name="p1"/>
+      </run>
+     </groups>
+    <classes>
+      <class name="com.facebook.tests.Login_Tests"/>
+    </classes>
+    </test>
+  </suite>
