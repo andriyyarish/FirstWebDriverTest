@@ -66,9 +66,10 @@ public class Login_Tests {
 
 
 
-        Assert.assertEquals(driver.getTitle(),"Facebook");
+        Assert.assertEquals(driver.getTitle(), "Facebook");
 
-//asd//
+
+
     }
 
 
