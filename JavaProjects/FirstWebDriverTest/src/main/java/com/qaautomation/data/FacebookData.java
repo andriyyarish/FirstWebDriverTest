@@ -22,6 +22,8 @@ public class FacebookData {
         return new Object[][]{
                 {"andyyarish@gmail.com","Sheva789"},
                 {"coolandriy@gmail.com", "Sheva789"},
+                {"coolandriy@gmail.com", " "}
+
 
         };
     }
