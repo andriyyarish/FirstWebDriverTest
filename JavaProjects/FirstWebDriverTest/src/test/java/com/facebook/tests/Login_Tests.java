@@ -1,5 +1,6 @@
 package com.facebook.tests;
 
+import com.gargoylesoftware.htmlunit.util.StringUtils;
 import com.qaautomation.data.FacebookData;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -7,7 +8,11 @@ import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.FacebookLoginPage;
-import pages.FacebookMainPage;
+import pages.FacebookLoginPageError;
+import pages.FacebookMainFeed;
+import org.apache.commons.lang3.StringUtils.*;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Created by NewMan on 03.11.2015.
@@ -16,12 +21,17 @@ public class Login_Tests {
 
 
     public WebDriver driver;
-    FacebookLoginPage fBMainpage;
+    FacebookLoginPage fBLoginPage;
+    FacebookLoginPageError fBLoginPageError;
+    FacebookMainFeed fbMainFeed;
 
     @BeforeClass (alwaysRun = true)
     public void setUp(){
          this.driver = new FirefoxDriver();
-        fBMainpage = PageFactory.initElements(driver,FacebookLoginPage.class);             //new FacebookLoginPage(driver);
+        fBLoginPage = PageFactory.initElements(driver,FacebookLoginPage.class);
+        fBLoginPageError = PageFactory.initElements(driver, FacebookLoginPageError.class);
+        fbMainFeed = PageFactory.initElements(driver,FacebookMainFeed.class);
+                                                            //new FacebookLoginPage(driver);
     }
 
     @AfterClass (alwaysRun = true)
@@ -36,39 +46,44 @@ public class Login_Tests {
     @Test (groups={"p0","checkLoadPage"}) // each group will be run separetly browser will be closed after each group passed
 
         public void loadPage(){
-        driver.get(fBMainpage.PAGE_URL);
-        Assert.assertEquals(driver.getTitle(), fBMainpage.PAGE_TITLE);
+        driver.get(fBLoginPage.PAGE_URL);
+        Assert.assertEquals(driver.getTitle(), fBLoginPage.PAGE_TITLE);
         }
 
     @Test (groups ={"p2","checkLogin"}, dependsOnMethods = "loadPage") //// each group will be run separetly
         public  void fiilOutEmailField(){
-        fBMainpage.setText_EmailLogin("coolandriy@rambler.ru");
+        fBLoginPage.setText_EmailLogin("coolandriy@rambler.ru");
 
         }
 
     @Test(groups ={"p2","checkLogin"} ,dependsOnMethods = "fiilOutEmailField")
     public void fillAutPassword () {
-        fBMainpage.setText_PasswordLogin("Sheva789"); // Assertion is in PageObject metod
+        fBLoginPage.setText_PasswordLogin("Sheva789"); // Assertion is in PageObject metod
     }
 
     @Test(groups = {"p2","CheckLogin"}, dependsOnMethods = "fillAutPassword")
     public void clickLogin ()  {
-        fBMainpage.clickLoginMain();
+        fBLoginPage.clickLoginMain();
     }
 
-    @Test (groups = {"p1"}, dataProviderClass = FacebookData.class,   dataProvider = "login")
-    public void loginToMain(String email, String password){
-        driver.get(fBMainpage.PAGE_URL);
-        Assert.assertEquals(driver.getTitle(), fBMainpage.PAGE_TITLE);
-        fBMainpage.setText_EmailLogin(email);
-        fBMainpage.setText_PasswordLogin(password);
-        fBMainpage.clickLoginMain();
+    @Test (groups = {"p3"}, dataProviderClass = FacebookData.class,   dataProvider = "login")
+    public void loginToMain(String email, String password, String errorType) throws InterruptedException {
+        driver.manage().deleteAllCookies();
+        driver.get(fBLoginPage.PAGE_URL);
+        Assert.assertEquals(driver.getTitle(), fBLoginPage.PAGE_TITLE);
+        fBLoginPage.setText_EmailLogin(email);
+        fBLoginPage.setText_PasswordLogin(password);
+        fBLoginPage.clickLoginMain();
 
-
-
-        Assert.assertEquals(driver.getTitle(), "Facebook");
-
-
+// this Block go=ive possibility ti check possitive and negative cases because we can get different type of pages for possitive and negaive cases
+        if (!isBlank(errorType)) {
+           Boolean result = fBLoginPageError.checkErrorheader(errorType);
+            Assert.assertTrue(result,"Expected error" + errorType);
+        }
+        else {
+            String username_field = fbMainFeed.getuserNameText();
+            Assert.assertTrue(!username_field.isEmpty());
+        }
 
     }
 
