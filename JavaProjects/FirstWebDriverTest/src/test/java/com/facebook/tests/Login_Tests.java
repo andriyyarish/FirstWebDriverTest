@@ -40,9 +40,6 @@ public class Login_Tests {
     }
 
 
-
-
-
     @Test (groups={"p0","checkLoadPage"}) // each group will be run separetly browser will be closed after each group passed
 
         public void loadPage(){
@@ -86,6 +83,31 @@ public class Login_Tests {
         }
 
     }
+
+    // lesson 9  work with DDL
+    @Test (groups = {"p4"})
+    public void fillRegisterData(){
+        driver.manage().deleteAllCookies();
+        driver.get(fBLoginPage.PAGE_URL);
+        Assert.assertEquals(driver.getTitle(), fBLoginPage.PAGE_TITLE);
+
+        fBLoginPage.setField_FirstNameSignUp("andy");
+        fBLoginPage.setField_LastNameSignUp("yarish");
+        fBLoginPage.setField_EmailMobileSignUp("andycucumber@gmail.com");
+        fBLoginPage.setField_PasswordSignUp("Sheva789");
+        fBLoginPage.selectDay("22");
+        fBLoginPage.selectMonth("12");
+        fBLoginPage.selectYear("2000");
+
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 
 }
